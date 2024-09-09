@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="autocustomergroup">
+            <group id="newzealandgst" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>New Zealand GST</label>
+                <comment><![CDATA[
+<div class="autocustomergroup-schemeoverview">
+<p>This Scheme applies to shipments being sent from anywhere in the world to Consumers (Not B2B transactions) in New Zealand.</p>
+<p>As of 1st December 2019, all sellers must (if their turnover to New Zealand exceeds 60,000 NZD) register for the New Zealand GST scheme,
+    and collect GST for B2C transactions at the point of sale and remit to the New Zealand Government.</p>
+<p>The module assumes the following rules :</p>
+<ul>
+    <li><b>Domestic</b> - For shipments within New Zealand, normal New Zealand GST rules apply.</li>
+    <li><b>Import B2B</b> - For shipments from outside of New Zealand to New Zealand and the buyer presents their GST validated NZBN
+    Number, then GST should not be charged.</li>
+    <li><b>Import Taxed</b> - For imports into New Zealand, where the value of each individual item is below or equal to 1,000 NZD, then
+        GST should be charged on the order.</li>
+    <li><b>Import Untaxed</b> - For imports into New Zealand, where one or more individual items value is above 1,000 NZD, then GST should
+        NOT be charged and instead will be collected at the New Zealand border along with any duties due.</li>
+</ul>
+<p>For the New Zealand GST Scheme, the following applies (This can be confirmed
+    <a href="https://www.ird.govt.nz/-/media/project/ir/home/documents/forms-and-guides/ir200---ir299/ad264/ad264-2019.pdf"
+    target="_blank">here</a>) : </p>
+<ul>
+    <li>When determining whether GST should be charged (GST Threshold) Shipping or Insurance Costs are not included in the value of the goods.</li>
+    <li>When determining the amount of GST to charge the Goods value does include Shipping and Insurance Costs.</li>
+</ul>
+<p>The <a href="https://www.ird.govt.nz/-/media/project/ir/home/documents/forms-and-guides/ir200---ir299/ad264/ad264-2019.pdf" target="_blank">Selling goods to consumers
+    in New Zealand Guide</a> provides information on what to do where an order contains a mixture of items below and above the threshold. It recommends to charge
+    GST on the low value items and not charge GST on the high value items. This situation is too complex for this module to handle at present, therefore
+    if any single item on the order is above the GST Threshold, then no GST will be charged on the order, and the correct GST will be charged at the
+    New Zealand border.</p>
+<p>More information on the scheme can be found on the
+    <a href="https://www.ird.govt.nz/gst/gst-for-overseas-businesses/gst-on-low-value-imported-goods" target="_blank">New Zealand Inland Revenue Website</a></p>
+<p>When validating online, Buyers NZBN numbers are checked using the New Zealand Governments NZBN online checking service. Current registration for GST is checked.</p>
+<p>To obtain the access token follow the procedure.</p>
+<ul>
+<li>Sign up for an account at <a href="https://api.business.govt.nz" target="_blank">the New Zealand Government API Website</a></li>
+<li>Create an application at the "My Applications" section</li>
+<li>Subscribe to the NZBN Version 5 API in the "Apis" section</li>
+<li>You may be required to sign a license agreement to use the service</li>
+<li>Generate Subscription Keys for both sandbox and production services</li>
+<li>Generate access tokens with -1 seconds validity time (this ensures they don't expire)</li>
+</ul>
+<p>With offline validation, only a simple format check and checksum calculation is performed. The New Zealand Government do NOT require you to perform
+online validation before accepting an NZBN number.</p>
+</div>
+                    ]]></comment>
+                <depends>
+                    <field id="autocustomergroup/general/enabled">1</field>
+                </depends>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="frontendprompt" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Tax Identifier Field - Customer Prompt</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="validate_online" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Validate Online</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <ul>
+                        <li>Yes : GST Registration Status is checked with NZBN Register using the NZBN number.</li>
+                        <li>No : Only the format of the NZBN number is checked.</li>
+                        </ul>
+                        ]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="environment" translate="label" type="select" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Environment</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Environment</source_model>
+                    <depends>
+                        <field id="validate_online">1</field>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="accesstoken" translate="label" type="text" sortOrder="27" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API Access Token</label>
+                    <depends>
+                        <field id="validate_online">1</field>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="registrationnumber" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>GST Registration Number</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="importthreshold" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Import GST Threshold (NZD)</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="usemagentoexchangerate" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Use Magento Exchange Rate</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="exchangerate" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Exchange Rate</label>
+                    <comment>
+                        <![CDATA[
+                        The exchange rate to convert from NZD to Store Base Currency. It is recommended to use the New Zealand Customs exchange rates, which can be found on the
+                        <a href="https://www.customs.govt.nz/business/import/customs-exchange-rates/" target="_blank">New Zealand Customs Service Website</a>.
+                        ]]></comment>
+
+                    <depends>
+                        <field id="usemagentoexchangerate">0</field>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="importthresholdstorecurrency" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1">
+                    <label>Import GST Threshold (Store Base Currency)</label>
+                    <frontend_model>NzGstImportThresholdStoreBaseCurrency</frontend_model>
+                    <comment>If the price of any item within the order is above this value then no GST should be charged on the order.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="domestic" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Customer Group - Domestic</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Group</source_model>
+                    <comment>Merchant Country is in New Zealand, Item is being shipped to New Zealand.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="importb2b" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Customer Group - Import B2B</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Group</source_model>
+                    <comment>Merchant Country is not in New Zealand, Item is being shipped to New Zealand, GST Number Supplied.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="importtaxed" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Customer Group - Import Taxed</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Group</source_model>
+                    <comment>Merchant Country is not in New Zealand, Item is being shipped to New Zealand, Value of each individual item is below or equal to Import GST Threshold.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="importuntaxed" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Customer Group - Import Untaxed</label>
+                    <source_model>Gw\AutoCustomerGroup\Model\Config\Source\Group</source_model>
+                    <comment>Merchant Country is not in New Zealand, Item is being shipped to New Zealand, One or more items value is above the Import GST Threshold.</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
