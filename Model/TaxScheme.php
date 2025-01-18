@@ -142,9 +142,9 @@ class TaxScheme  implements TaxSchemeInterface
     /**
      * Get customer group based on Validation Result and Country of customer
      * @param string $customerCountryCode
-     * @param string|null $customerPostCode
      * @param bool $taxIdValidated
      * @param float $orderValue
+     * @param string|null $customerPostCode
      * @param int|null $storeId
      * @return int|null
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -153,9 +153,9 @@ class TaxScheme  implements TaxSchemeInterface
      */
     public function getCustomerGroup(
         string $customerCountryCode,
-        ?string $customerPostCode,
         bool $taxIdValidated,
         float $orderValue,
+        ?string $customerPostCode,
         ?int $storeId
     ): ?int {
         $merchantCountry = $this->scopeConfig->getValue(
@@ -230,7 +230,7 @@ class TaxScheme  implements TaxSchemeInterface
      * Peform validation of the NZBN Number, returning a gatewayResponse object
      *
      * @param string $countryCode
-     * @param string|null $taxId
+     * @param string $taxId
      * @return TaxIdCheckResponseInterface
      * @throws GuzzleException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -238,7 +238,7 @@ class TaxScheme  implements TaxSchemeInterface
      */
     public function checkTaxId(
         string $countryCode,
-        ?string $taxId
+        string $taxId
     ): TaxIdCheckResponseInterface {
         $taxIdCheckResponse = $this->ticrFactory->create();
 
@@ -327,7 +327,7 @@ class TaxScheme  implements TaxSchemeInterface
             if ($this->scopeConfig->getValue(
                     "autocustomergroup/" . self::CODE . "/environment",
                     ScopeInterface::SCOPE_STORE
-                ) == Environment::ENVIRONMENT_PRODUCTION) {
+                ) === Environment::ENVIRONMENT_PRODUCTION) {
                 $baseUrl = "https://api.business.govt.nz/gateway/nzbn/v5";
             } else {
                 $baseUrl = "https://api.business.govt.nz/sandbox/nzbn/v5";
