@@ -610,4 +610,12 @@ class TaxScheme  implements TaxSchemeInterface
             $storeId
         );
     }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getSchemeId();
+    }
 }
