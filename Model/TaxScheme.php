@@ -165,8 +165,7 @@ class TaxScheme  implements TaxSchemeInterface
         );
         if (empty($merchantCountry)) {
             $this->logger->critical(
-                "Gw/AutoCustomerGroupNewZealand/Model/TaxScheme::getCustomerGroup() : " .
-                "Merchant country not set."
+                __METHOD__ . " Merchant country not set"
             );
             return null;
         }
@@ -314,8 +313,7 @@ class TaxScheme  implements TaxSchemeInterface
         );
         if (empty($accesstoken)) {
             $this->logger->critical(
-                "AutoCustomerGroup/Model/TaxSchemes/NewZealandGst::checkTaxId() : " .
-                "No Access Token"
+                __METHOD__ . " No Access Token"
             );
             $taxIdCheckResponse->setRequestMessage(__('No access token.'));
             $taxIdCheckResponse->setIsValid(false);
@@ -349,9 +347,10 @@ class TaxScheme  implements TaxSchemeInterface
                 $taxIdCheckResponse->setIsValid(false);
                 $taxIdCheckResponse->setRequestMessage(__('Error communicating with NZBN API.'));
                 $this->logger->error(
-                    "Gw/AutoCustomerGroup/Model/TaxSchemes/NewZealandGst::checkTaxId() : Could not interpret " .
-                    " response",
-                    ['registration' => $registrations]
+                    __METHOD__ . " Could not interpret response",
+                    [
+                        'registrations' => $registrations
+                    ]
                 );
                 $taxIdCheckResponse->setRequestSuccess(false);
                 return $taxIdCheckResponse;
@@ -386,8 +385,11 @@ class TaxScheme  implements TaxSchemeInterface
                     $taxIdCheckResponse->setRequestSuccess(false);
                     $taxIdCheckResponse->setRequestMessage(__('There was an error checking the NZBN number.'));
                     $this->logger->error(
-                        "Gw/AutoCustomerGroup/Model/TaxSchemes/NewZealandGst::checkTaxId() : Error received " .
-                        "from Server. " . $e->getCode() . " " . $e->getMessage()
+                        __METHOD__ . " Exception - Error received from Server",
+                        [
+                            'message' => $e->getMessage(),
+                            'code' => $e->getCode()
+                        ]
                     );
                     break;
             }
@@ -596,9 +598,12 @@ class TaxScheme  implements TaxSchemeInterface
                 ->getAnyRate($websiteBaseCurrency);
             if (!$exchangerate) {
                 $this->logger->critical(
-                    "Gw/AutoCustomerGroupNewZealand/Model/TaxScheme::getSchemeExchangeRate() : " .
-                    "No Magento Exchange Rate configured for " . self::SCHEME_CURRENCY . " to " .
-                    $websiteBaseCurrency . ". Using 1.0"
+                    __METHOD__ . " No Exchange Rate configured. Using 1.0",
+                    [
+                        'Scheme Currency' => self::SCHEME_CURRENCY,
+                        'Base Currency' => $websiteBaseCurrency,
+
+                    ]
                 );
                 $exchangerate = 1.0;
             }
